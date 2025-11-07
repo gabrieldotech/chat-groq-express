@@ -7,16 +7,30 @@ const groq = new Groq();
 const HISTORY_FILE = path.join(__dirname, "..", "data", "history.json");
 
 // Função para carregar o histórico
-// SERÁ PREENCHIDA POR FABIO REIS (Tarefa 5º - Persistência)
 const loadHistory = async () => {
-  // Retorna array vazio como placeholder
-  return [];
+  try {
+    const data = await fs.readFile(HISTORY_FILE, "utf-8")
+    return JSON.parse(data);
+  } catch(error) {
+    if(error.code == "ENOENT") {
+      return [];
+    }
+    console.error("Erro ao carregar histórico", error.message);
+    return [];
+  }
 };
 
 // Função para salvar o histórico
-// SERÁ PREENCHIDA POR FABIO REIS (Tarefa 5º - Persistência)
 const saveHistory = async (history) => {
-  // Não faz nada por enquanto.
+  try {
+    // 1. Garante que o diretório 'data' exista antes de escrever
+    await fs.mkdir(path.dirname(HISTORY_FILE), {recursive: true});
+    
+    // 2. Converte o array para JSON formatado (null, 2) e salva no arquivo
+    await fs.writeFile(HISTORY_FILE,JSON.stringify(history,null,2));
+  } catch(error) {
+    console.error("Erro ao salvar histórico", error)
+  }
 };
 
 // Controlador principal para enviar mensagem e chamar a IA
