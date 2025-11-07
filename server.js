@@ -1,10 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const chatController = require("./controllers/chatController");
-require("dotenv").config();
+const chatController = require("./controllers/chatController")
 const app = express();
 const port = 3000;
-
 // Configuração do EJS para as views
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
