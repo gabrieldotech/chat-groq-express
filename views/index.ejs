@@ -12,14 +12,14 @@
     </div>
     <h1>MiniChat IA</h1>
     <div id="messages">
-        <% history.forEach(msg => {%>
-            <div class="message <%= msg.role %>">
-                <strong><% = msg.role === 'user'?'Você:' : 'IA Groq:'%> </strong>
-                <span><% = msg.content %></span>
-        
-            </div>
-            <% }); %>
+        <% history.forEach(msg => { %>
+        <div class="message <%= msg.role %>">
+            <strong><%= msg.role === 'user' ? 'Você:' : 'IA Groq:' %></strong>
+            <span><%= msg.content %></span>
+        </div>
+        <% }); %>
     </div>
+
     <form id="chat-fomr">
         <input type="text" id="message-input" placeholder="Digite sua mensagem..." required>
         <button type="submit">Enviar</button>
