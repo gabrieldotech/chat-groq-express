@@ -40,10 +40,38 @@ const sendMessage = async (req, res) => {
   if (!userMessage) {
     return res.status(400).json({ error: "Mensagem vazia." });
   }
+  try {
+    // Carrega o histórico existente
+    const history = await loadHistory();
+    // Adiciona a mensagem do usuário ao histórico
+    history.push({ role: "user", content: userMessage });
+    // Chama a API da Groq para obter a resposta da IA
+    const messagesForGroq = history.map(msg => ({
+      role:msg.role,
+      ,content:msg.content
+}));
+    const chatCompletion = await groq.chat.completions.create({
+      messages: messagesForGroq,
+      model: "openai/gpt-oss-120b",
+      temperature: 0.7,
+    });
+    const aiResponse = chatCompletion.choices[0].message.content;?.message?.content|| 
+    "Desculpe, não consegui gerar uma resposta.";
 
-  // Placeholder temporário antes do PR de Gabriel M. Reis
-  res.status(501).json({ error: "Funcionalidade de IA em desenvolvimento." });
-};
+    history.push({ role: "assistant", content: aiResponse });
+    // Salva o histórico atualizado
+    await saveHistory(history);
+    // Envia a resposta da IA de volta ao cliente
+    res.json({ success true, userMessage, aiResponse });
+  }catch (error) {
+    console.error("Erro na integração com API Groq:", error);
+    res.status(500).json({ error: "Erro ao comunicar com a IA." });
+  }
+  };
+
+
+    const aiMessage = chatCompletion.choices[0].message;
+    // Adiciona a resposta da IA ao histórico
 
 // Exporta as funções que serão usadas pelo server.js
 module.exports = {
