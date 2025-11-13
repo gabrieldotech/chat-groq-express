@@ -22,7 +22,7 @@ body {
 }
 
 h1 {
- background-color: #007bff; /* Título Azul */
+ background-color: #ed471b; /* Título Azul */
  color: white;
  padding: 15px;
  margin: 0;
@@ -32,33 +32,39 @@ h1 {
 
 /* Bloco 2: Estilo dos Balões de Mensagens */
 #messages {
-    flex-grow: 1;
-    padding: 15px;
-    overflow-y: auto;
-    border-bottom: 1px solid #ddd;
-   }
-   .message {
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border-radius: 18px; /* Balões arredondados */
-    max-width: 80%;
-    line-height: 1.4;
-    word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  overflow-y: auto;
+}
+.message {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin: 6px 0;
+  max-width: 70%; /* impede que o balão ocupe a tela toda */
+  word-wrap: break-word; /* quebra o texto longo */
 }
 
 /* Mensagens do Usuário (Sua Mensagem) */
 .message.user {
- background-color: #d1e7ff; /* Azul claro */
- margin-left: auto; /* Alinha à direita */
- text-align: right;
+  background-color: #08336b;
+  color: white;
+  margin-left: auto;
+  text-align: right;
+  align-self: flex-end;
 }
 
 /* Mensagens do Assistente (Resposta da IA) */
 .message.assistant {
- background-color: #e9ecef; /* Cinza claro */
- margin-right: auto; /* Alinha à esquerda */
- text-align: left;
+  background-color: #e0e0e0;
+  color: #000;
+  margin-right: auto;
+  text-align: left;
+  align-self: flex-start;
 }
+
 
 /* Bloco 3: Formulário de Envio */
 #chat-form {
@@ -77,7 +83,7 @@ h1 {
 
 #chat-form button {
  padding: 10px 20px;
- background-color: #007bff;
+ background-color: #ed471b;
  color: white;
  border: none;
  border-radius: 25px;
@@ -86,6 +92,6 @@ h1 {
 }
 
 #chat-form button:hover {
- background-color: #0056b3;
+ background-color: #08336b;;
 }   
 

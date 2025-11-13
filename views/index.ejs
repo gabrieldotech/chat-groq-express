@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Brazcubas IA - Chat</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
     <div id="chat-container">
-      <h1>MiniChat IA</h1>
+      <h1>BrazCubas IA</h1>
       <div id="messages">
         <% history.forEach(msg => { %>
         <div class="message <%= msg.role %>">
-          <strong><%= msg.role === 'user' ? 'Você:' : 'IA Groq:' %></strong>
+          <strong><%= msg.role === 'user' ? 'Você:' : 'Brazcubas IA:' %></strong>
           <span><%= msg.content %></span>
         </div>
         <% }); %>
