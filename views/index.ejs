@@ -13,8 +13,8 @@
         <% history.forEach(msg => { %>
         <div class="message <%= msg.role %>">
           <strong
-            ><%= msg.role === 'user' ? 'Você:' : 'Braz Cubas IA:' %></strong
-          >
+            ><%= msg.role === 'user' ? 'Você:' : 'Braz Cubas IA:' %>
+          </strong>
           <span><%= msg.content %></span>
         </div>
         <% }); %>

@@ -1,33 +1,33 @@
 /* Bloco 1: Reset e Layout Principal */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    display: flex; /* Centraliza horizontal e verticalmente */
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-   }
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  display: flex; /* Centraliza horizontal e verticalmente */
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
 
-   #chat-container {
-    width: 90%;
-    max-width: 650px;
-    background: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    max-height: 90vh;
+#chat-container {
+  width: 90%;
+  max-width: 650px;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90vh;
 }
 
 h1 {
- background-color: #ed471b; /* Título Azul */
- color: white;
- padding: 15px;
- margin: 0;
- text-align: center;
- font-size: 1.3em;
+  background-color: #ed471b; /* Título Azul */
+  color: white;
+  padding: 15px;
+  margin: 0;
+  text-align: center;
+  font-size: 1.3em;
 }
 
 /* Bloco 2: Estilo dos Balões de Mensagens */
@@ -65,33 +65,31 @@ h1 {
   align-self: flex-start;
 }
 
-
 /* Bloco 3: Formulário de Envio */
 #chat-form {
-    display: flex;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-   }
-   #message-input {
-    flex-grow: 1;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    margin-right: 10px;
-    font-size: 1em;
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+#message-input {
+  flex-grow: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  margin-right: 10px;
+  font-size: 1em;
 }
 
 #chat-form button {
- padding: 10px 20px;
- background-color: #ed471b;
- color: white;
- border: none;
- border-radius: 25px;
- cursor: pointer;
- transition: background-color 0.2s;
+  padding: 10px 20px;
+  background-color: #ed471b;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 #chat-form button:hover {
- background-color: #08336b;;
-}   
-
+  background-color: #08336b;
+}

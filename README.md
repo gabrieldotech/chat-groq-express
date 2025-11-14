@@ -1,155 +1,100 @@
-# MiniChat Groq — Projeto Colaborativo Git & IA
 
-## 1. Visão Geral
 
-O **MiniChat Groq** é uma aplicação web que simula um chatbot integrado à API da Groq AI.
-Projeto desenvolvido com foco didático em colaboração via Git/GitHub, integração com IA e separação clara de responsabilidades entre front-end, back-end e persistência.
+# BrazCubas IA - Chatbot com RAG e Arquitetura de Camadas
 
-**Objetivos:**
+Este projeto implementa um chatbot de atendimento automatizado utilizando a API da Groq, focado em alta velocidade de resposta e precisão contextual através da técnica **Retrieval-Augmented Generation (RAG)**.
 
-* Demonstrar fluxo Git com branches e Pull Requests.
-* Manter estrutura modular e testável (controllers, views, dados).
-* Integração prática com SDK de IA (Groq).
-* Persistência local de histórico em JSON.
-* Renderização com EJS e estilização CSS.
+O objetivo principal foi criar uma solução robusta, escalável e com alta legibilidade de código, aplicando as melhores práticas de **Arquitetura de Software em Camadas (Controller/Service)**.
 
----
+-----
 
-## 2. Tecnologias
+## Destaques Técnicos
 
-* Node.js
-* Express
-* EJS
-* Groq SDK
-* CSS
-* Git / GitHub
+| Feature | Descrição Técnica | Implementação |
+| :--- | :--- | :--- |
+| **RAG (Contexto)** | Injeta o conteúdo do `MANUAL.MD` diretamente no *System Prompt* do LLM, garantindo respostas factuais e específicas da Braz Cubas. | `contextService.js` |
+| **Arquitetura** | Separação estrita de responsabilidades entre Controladores e Serviços. | Padrão Controller/Service |
+| **Cache em Memória** | O manual de contexto é lido apenas uma vez na inicialização do servidor (cache), otimizando o desempenho do RAG. | `loadManualOnce()` |
+| **Persistência** | O histórico de conversas é salvo localmente em `data/history.json`. | `historyService.js` |
+| **Qualidade de Código** | Uso de **JSDoc** para documentação de funções e clareza de fluxo. | Comentários e Tipagem |
 
----
+-----
 
-## 3. Estrutura de Pastas
+## Como Rodar o Projeto
 
-```text
-minichat-groq/
-├── controllers/
-│   └── chatController.js
-│
-├── data/
-│   └── history.json
-│
-├── public/
-│   └── css/
-│       └── style.css
-│
-├── views/
-│   └── index.ejs
-│
-├── .env.example
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── server.js
+Siga estes passos para configurar e executar a aplicação em seu ambiente local.
+
+### Pré-requisitos
+
+  * **Node.js** (Versão LTS recomendada).
+  * **npm** (Gerenciador de Pacotes do Node).
+  * Uma chave de API da **Groq** (para o Large Language Model).
+
+### 1\. Configuração Inicial
+
+1.  **Clone o repositório:**
+
+    ```bash
+    git clone [URL_DO_SEU_REPOSITORIO]
+    cd chat-groq-express
+    ```
+
+2.  **Instale as dependências:**
+
+    ```bash
+    npm install
+    ```
+
+### 2\. Configuração de Variáveis de Ambiente
+
+Crie um arquivo chamado `.env` na raiz do projeto (o mesmo nível do `server.js`) e adicione sua chave de API:
+
+```dotenv
+# .env file
+# Adicione sua chave de API Groq aqui
+GROQ_API_KEY="SUA_CHAVE_AQUI"
 ```
 
----
+### 3\. Contexto RAG (Manual de Conhecimento)
 
-## 4. Organização da Equipe e Responsabilidades
+O contexto de conhecimento para o RAG é fornecido pelo arquivo **`data/MANUAL.MD`**, que já está incluído no projeto.
 
-A seguir, a divisão final de tarefas. **Gabriel** é o líder do projeto e figura como responsável número 1 (branch `main`) — incumbido do setup inicial, arquivos de configuração base e revisão/merge final.
+* O arquivo **`data/MANUAL.MD`** é a fonte primária de respostas do chatbot.
+* **Ação:** Revise o conteúdo deste arquivo para garantir que as informações de atendimento da Braz Cubas estejam completas e atualizadas, conforme necessário.
 
-### 4.1 Líder do Projeto
+### 4\. Execução
 
-| Usuário             | Branch | Responsabilidade Principal                                                                          | Arquivo(s) |
-| :------------------ | :----- | :-------------------------------------------------------------------------------------------------- | :--------- |
-| **Gabriel (Líder)** | `main` | Setup inicial, `.gitignore`, `.env.example`, esqueletos de arquivos, revisão e merge final das PRs. | Todos      |
-
----
-
-### 4.2 Back-end e Lógica Crítica
-
-| # | Usuário         | Branch                        | Tarefa Final (Lógica Crítica)                                                                                 | Arquivo(s)                      |
-| - | --------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| 1 | Fabio Reis      | `feature/history-json-logic`  | Persistência crítica: criar funções `loadHistory` e `saveHistory` para o JSON.                                | `controllers/chatController.js` |
-| 2 | Gabriel M. Reis | `feature/groq-api-call-logic` | Lógica IA crítica: implementar chamada real à API Groq e a lógica central `sendMessage`.                      | `controllers/chatController.js` |
-| 3 | Leonardo Vitale | `feature/client-logic-fetch`  | Lógica cliente/fetch: implementar JavaScript para envio via `fetch` e processamento da resposta JSON na view. | `views/index.ejs`               |
-
----
-
-### 4.3 Front-end e Setup (Visual / Estrutura)
-
-| # | Usuário              | Branch                          | Tarefa Final (Visual / Setup)                                                                       | Arquivo(s)                               |
-| - | -------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| 1 | Pedro H. Jordão      | `feature/lock-and-history-file` | Finalizar setup: gerar `package-lock.json` e criar `data/history.json` inicial (array vazio).       | `package-lock.json`, `data/history.json` |
-| 2 | Milena Rodrigues     | `feature/express-routes`        | Completar setup Express: adicionar `express.static`, `express.json` e rotas `GET /` e `POST /chat`. | `server.js`                              |
-| 3 | Mariana Silva        | `feature/ejs-form`              | Estrutura de view: criar HTML base, `<head>` e formulário de chat.                                  | `views/index.ejs`                        |
-| 4 | Carlos Henryque      | `feature/ejs-history-render`    | Renderização do histórico: implementar `history.forEach` e loop EJS no `index.ejs`.                 | `views/index.ejs`                        |
-| 5 | Gustavo G. Guimarães | `feature/css-style`             | Estilização final da interface e ajustes visuais.                                                   | `public/css/style.css`                   |
-
----
-
-## 5. Como Configurar e Executar
-
-1. Clonar o repositório:
-
-```bash
-git clone https://github.com/SEU-USUARIO/minichat-groq.git
-cd minichat-groq
-```
-
-2. Instalar dependências:
-
-```bash
-npm install
-```
-
-3. Criar arquivo de ambiente:
-
-```bash
-cp .env.example .env
-```
-
-Adicionar chave:
-
-```
-GROQ_API_KEY=sua_chave_aqui
-```
-
-4. Iniciar servidor:
+Use o script `start` definido no `package.json` para iniciar o servidor Express:
 
 ```bash
 npm start
 ```
 
-A aplicação estará em: `http://localhost:3000`
+O servidor será iniciado na porta 3000.
 
----
+> **Acesse:** Abra seu navegador e navegue para `http://localhost:3000`
 
-## 6. Testes Rápidos
+-----
 
-* Enviar mensagem pelo formulário; verificar resposta gerada pela API Groq.
-* Confirmar persistência: `data/history.json` deve registrar as conversas.
-* Validar que `package-lock.json` está presente para garantir reprodutibilidade de dependências.
+## Estrutura do Projeto
 
----
+A aplicação segue o padrão de **Arquitetura de Camadas** para separação de responsabilidades:
 
-## 7. Boas Práticas de Colaboração
-
-* Sempre trabalhar em branch própria:
-
-```bash
-git checkout -b feature/nome-da-feature
 ```
-
-* Abrir Pull Request para revisão antes do merge.
-* Testar localmente antes de submeter o PR.
-* Documentar mudanças importantes no corpo do PR.
-
----
-
-## 8. Observações Finais
-
-* A ordem das responsabilidades foi definida para maximizar fluxo de entregas: líder prepara o esqueleto e garante merges, as tarefas críticas concentram-se na lógica e integração com IA, e as tarefas visuais/ de setup cuidam da experiência e reprodutibilidade.
-* Ajustes na divisão podem ser feitos por consenso via PRs e revisão do líder.
-
----
-
-MiniChat Groq — documento de divisão final de tarefas e instruções de setup.
+├── controllers/            # Lógica de Controle: Roteamento, Orquestração e System Prompt (RAG)
+│   └── chatController.js
+├── data/                   # Persistência de Dados e Contexto RAG
+│   ├── history.json        # Histórico de Conversas (Persistência)
+│   └── MANUAL.MD           # Fonte de Conhecimento RAG (Contexto)
+├── public/                 # Assets Estáticos: CSS e JavaScript do Cliente (Frontend)
+│   ├── css/
+│   └── js/
+├── services/               # Lógica de Negócio: I/O, Cache e Conexão de Dados
+│   ├── contextService.js   # Cache do Manual (RAG)
+│   └── historyService.js   # I/O do Histórico
+├── views/                  # Templates EJS (Renderização de HTML)
+│   └── index.ejs
+├── .env.example
+├── package.json
+└── server.js               # Inicialização e Roteamento Principal
+```

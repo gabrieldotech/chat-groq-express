@@ -1,84 +1,74 @@
+// Arquivo: controllers/chatController.js
+// Camada de Controle: Orquestra a lógica de negócio (Services) e a comunicação com APIs externas.
+
 const { Groq } = require("groq-sdk");
-const fs = require("fs/promises");
-const path = require("path");
+// Serviços internos para Contexto (RAG) e Persistência (Histórico)
+const { getFullContext } = require("../services/contextService");
+const { loadHistory, saveHistory } = require("../services/historyService");
 
-// Inicialização da Groq e caminho do arquivo de histórico
+// Inicialização do cliente da Groq
 const groq = new Groq();
-const HISTORY_FILE = path.join(__dirname, "..", "data", "history.json");
 
-// Função para carregar o histórico
-const loadHistory = async () => {
-  try {
-    const data = await fs.readFile(HISTORY_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code == "ENOENT") {
-      return [];
-    }
-    console.error("Erro ao carregar histórico", error.message);
-    return [];
-  }
+/**
+ * Função exportada para a rota GET "/" (server.js).
+ * Abstrai o acesso ao serviço de histórico para a camada de roteamento.
+ * @returns {Promise<Array<Object>>} O histórico de mensagens carregado.
+ */
+const loadHistoryForRoute = async () => {
+  return await loadHistory();
 };
 
-// Função para salvar o histórico
-const saveHistory = async (history) => {
-  try {
-    // 1. Garante que o diretório 'data' exista antes de escrever
-    await fs.mkdir(path.dirname(HISTORY_FILE), { recursive: true });
-
-    // 2. Converte o array para JSON formatado (null, 2) e salva no arquivo
-    await fs.writeFile(HISTORY_FILE, JSON.stringify(history, null, 2));
-  } catch (error) {
-    console.error("Erro ao salvar histórico", error);
-  }
-};
-
-// Controlador principal para enviar mensagem e chamar a IA
-// O corpo desta função SERÁ PREENCHIDO POR GABRIEL M. REIS (Tarefa 6º - Lógica IA)
+/**
+ * Processa a requisição POST para envio de mensagem.
+ * 1. Valida a entrada.
+ * 2. Orquestra o carregamento de contexto e histórico.
+ * 3. Monta o System Prompt com RAG.
+ * 4. Chama a API da Groq.
+ * 5. Persiste as novas mensagens no histórico.
+ * 6. Retorna a resposta ao cliente.
+ */
 const sendMessage = async (req, res) => {
   const userMessage = req.body.message;
-  if (!userMessage) {
-    return res.status(400).json({ error: "Mensagem vazia." });
-  }
+  if (!userMessage) return res.status(400).json({ error: "Mensagem vazia." });
 
   try {
-    // Carrega o histórico existente
-    const history = await loadHistory();
+    // 1. Carregar contexto e histórico usando os Services
+    const history = await loadHistoryForRoute();
+    const fullContext = await getFullContext(); // Conteúdo do MANUAL.MD
 
-    // Adiciona a mensagem do usuário ao histórico
-    history.push({ role: "user", content: userMessage });
+    // 2. Montar a instrução do sistema (System Prompt) com o contexto RAG
+    const systemInstruction = `Você é um atendente especialista da Braz Cubas. Resuma respostas de forma breve e objetiva. Nunca use markdown, símbolos especiais, listas com marcadores ou formatação, apenas retorne texto puro.`;
+    // Injeção do contexto RAG: O LLM priorizará esta informação
+    const systemPromptWithContext = `${systemInstruction}\n\n**MANUAL COMPLETO PARA REFERÊNCIA:**\n${fullContext}`;
 
-    // Chama a API da Groq para obter a resposta da IA
-    const messagesForGroq = history.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    }));
+    // 3. Preparar as mensagens para a API (seguindo o padrão Groq/OpenAI)
+    const messagesForGroq = [
+      { role: "system", content: systemPromptWithContext },
+      ...history.slice(-10), // Limita o histórico de conversa a N mensagens (Otimização de Token)
+      { role: "user", content: userMessage },
+    ];
 
+    // 4. Chamar a API da Groq
     const chatCompletion = await groq.chat.completions.create({
       messages: messagesForGroq,
-      model: "openai/gpt-oss-120b",
-      temperature: 0.7,
+      model: "openai/gpt-oss-120b", // Modelo mais adequado para tarefas complexas com RAG
+      temperature: 0.1, // Temperatura baixa para respostas objetivas e factuais (atendimento)
     });
 
     const aiResponse =
-      chatCompletion.choices[0]?.message?.content ||
-      "Desculpe, não consegui gerar uma resposta.";
+      chatCompletion.choices[0]?.message?.content || "Erro ao gerar resposta.";
 
+    // 5. Salvar histórico e responder ao cliente (Persistência assíncrona)
+    history.push({ role: "user", content: userMessage });
     history.push({ role: "assistant", content: aiResponse });
 
-    // Salva o histórico atualizado
     await saveHistory(history);
-
-    // Envia a resposta da IA de volta ao cliente
     res.json({ success: true, userMessage, aiResponse });
   } catch (error) {
-    console.error("Erro na integração com API Groq:", error);
+    console.error("Erro na IA/Controlador:", error);
     res.status(500).json({ error: "Erro ao comunicar com a IA." });
   }
 };
 
-// Exporta as funções que serão usadas pelo server.js
-module.exports = {
-  loadHistory,
-  sendMessage,
-};
+// Exporta as funções necessárias para o servidor
+module.exports = { loadHistory: loadHistoryForRoute, sendMessage };
